@@ -12,7 +12,8 @@ import os
 def generate_launch_description():
     # Declare arguments
     args = [
-        DeclareLaunchArgument("camera_name", default_value="camera"),
+        DeclareLaunchArgument("camera_name", default_value="right_robot1_camera"),
+        # DeclareLaunchArgument("camera_name", default_value="camera"),
         DeclareLaunchArgument("depth_registration", default_value="false"),
         DeclareLaunchArgument("serial_number", default_value=""),
         DeclareLaunchArgument("usb_port", default_value=""),
@@ -20,7 +21,7 @@ def generate_launch_description():
         DeclareLaunchArgument("uvc_backend", default_value="libuvc"),  # libuvc or v4l2
         DeclareLaunchArgument("product_id", default_value=""),
         DeclareLaunchArgument("enable_point_cloud", default_value="true"),
-        DeclareLaunchArgument("enable_colored_point_cloud", default_value="false"),
+        DeclareLaunchArgument("enable_colored_point_cloud", default_value="true"),
         DeclareLaunchArgument("cloud_frame_id", default_value=""),
         DeclareLaunchArgument("point_cloud_qos", default_value="default"),
         DeclareLaunchArgument("connection_delay", default_value="100"),
@@ -69,7 +70,7 @@ def generate_launch_description():
         DeclareLaunchArgument("gyro_range", default_value="1000dps"),
         DeclareLaunchArgument("linear_accel_cov", default_value="0.01"),
         DeclareLaunchArgument("angular_vel_cov", default_value="0.01"),
-        DeclareLaunchArgument("publish_tf", default_value="true"),
+        DeclareLaunchArgument("publish_tf", default_value="false"),
         DeclareLaunchArgument("tf_publish_rate", default_value="0.0"),
         DeclareLaunchArgument("ir_info_url", default_value=""),
         DeclareLaunchArgument("color_info_url", default_value=""),
@@ -107,6 +108,11 @@ def generate_launch_description():
 
     # Node configuration
     parameters = [{arg.name: LaunchConfiguration(arg.name)} for arg in args]
+    camera_name_val = "right_robot1_camera"
+    remappings = [('/'+ camera_name_val +'/color/image_raw', '/camera/'+ camera_name_val +'/color/image_raw'),
+                    ('/'+ camera_name_val +'/depth_registered/points', '/camera/'+ camera_name_val +'/depth/color/points'),
+                    ('/'+ camera_name_val +'/depth/camera_info', '/camera/'+ camera_name_val +'/depth/camera_info'),
+                    ('/'+ camera_name_val +'/color/camera_info', '/camera/'+ camera_name_val +'/color/camera_info')]
     # get  ROS_DISTRO
     ros_distro = os.environ["ROS_DISTRO"]
     if ros_distro == "foxy":
@@ -132,6 +138,7 @@ def generate_launch_description():
             name=LaunchConfiguration("camera_name"),
             namespace="",
             parameters=parameters,
+            remappings=remappings,
         )
         # Define the ComposableNodeContainer
         container = ComposableNodeContainer(
