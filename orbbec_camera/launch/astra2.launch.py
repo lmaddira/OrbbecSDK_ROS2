@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, TextSubstitution
 from launch_ros.actions import PushRosNamespace
 from launch.actions import GroupAction
 from launch_ros.actions import ComposableNodeContainer
@@ -14,7 +14,7 @@ def generate_launch_description():
     args = [
         DeclareLaunchArgument("camera_name", default_value="right_robot1_camera"),
         # DeclareLaunchArgument("camera_name", default_value="camera"),
-        DeclareLaunchArgument("depth_registration", default_value="false"),
+        DeclareLaunchArgument("depth_registration", default_value="true"),
         DeclareLaunchArgument("serial_number", default_value=""),
         DeclareLaunchArgument("usb_port", default_value=""),
         DeclareLaunchArgument("device_num", default_value="1"),
@@ -70,12 +70,12 @@ def generate_launch_description():
         DeclareLaunchArgument("gyro_range", default_value="1000dps"),
         DeclareLaunchArgument("linear_accel_cov", default_value="0.01"),
         DeclareLaunchArgument("angular_vel_cov", default_value="0.01"),
-        DeclareLaunchArgument("publish_tf", default_value="false"),
+        DeclareLaunchArgument("publish_tf", default_value="true"),
         DeclareLaunchArgument("tf_publish_rate", default_value="0.0"),
         DeclareLaunchArgument("ir_info_url", default_value=""),
         DeclareLaunchArgument("color_info_url", default_value=""),
         DeclareLaunchArgument("log_level", default_value="none"),
-        DeclareLaunchArgument("enable_publish_extrinsic", default_value="false"),
+        DeclareLaunchArgument("enable_publish_extrinsic", default_value="true"),
         DeclareLaunchArgument("enable_frame_sync", default_value="true"),
         DeclareLaunchArgument('enable_decimation_filter', default_value='false'),
         DeclareLaunchArgument('enable_threshold_filter', default_value='false'),
@@ -96,7 +96,7 @@ def generate_launch_description():
         DeclareLaunchArgument('temporal_filter_diff_threshold', default_value='-1.0'),
         DeclareLaunchArgument('temporal_filter_weight', default_value='-1.0'),
         DeclareLaunchArgument('hole_filling_filter_mode', default_value=''),
-        DeclareLaunchArgument("enable_d2c_viewer", default_value="false"),
+        DeclareLaunchArgument("enable_d2c_viewer", default_value="true"),
         DeclareLaunchArgument("enable_ldp", default_value="true"),
         DeclareLaunchArgument("ordered_pc", default_value="false"),
         DeclareLaunchArgument("enable_depth_scale", default_value="true"),
@@ -108,9 +108,12 @@ def generate_launch_description():
 
     # Node configuration
     parameters = [{arg.name: LaunchConfiguration(arg.name)} for arg in args]
+    # camera_name_val = LaunchConfiguration('camera_name')
+    # print("Camera Name:", camera_name_val)
     camera_name_val = "right_robot1_camera"
     remappings = [('/'+ camera_name_val +'/color/image_raw', '/camera/'+ camera_name_val +'/color/image_raw'),
                     ('/'+ camera_name_val +'/depth_registered/points', '/camera/'+ camera_name_val +'/depth/color/points'),
+                    # ('/'+ camera_name_val +'/depth/points', '/camera/'+ camera_name_val +'/depth/color/points'),
                     ('/'+ camera_name_val +'/depth/camera_info', '/camera/'+ camera_name_val +'/depth/camera_info'),
                     ('/'+ camera_name_val +'/color/camera_info', '/camera/'+ camera_name_val +'/color/camera_info')]
     # get  ROS_DISTRO
