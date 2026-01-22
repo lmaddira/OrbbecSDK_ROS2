@@ -78,15 +78,15 @@ def generate_launch_description():
         DeclareLaunchArgument("enable_publish_extrinsic", default_value="true"),
         DeclareLaunchArgument("enable_frame_sync", default_value="true"),
         DeclareLaunchArgument('enable_decimation_filter', default_value='false'),
-        DeclareLaunchArgument('enable_threshold_filter', default_value='false'),
+        DeclareLaunchArgument('enable_threshold_filter', default_value='true'),
         DeclareLaunchArgument('enable_noise_removal_filter', default_value='true'),
         DeclareLaunchArgument('enable_spatial_filter', default_value='false'),
         DeclareLaunchArgument('enable_temporal_filter', default_value='false'),
         DeclareLaunchArgument('enable_disparity_to_depth', default_value='true'),
         DeclareLaunchArgument('enable_hole_filling_filter', default_value='false'),
         DeclareLaunchArgument('decimation_filter_scale', default_value='-1'),
-        DeclareLaunchArgument('threshold_filter_max', default_value='-1'),
-        DeclareLaunchArgument('threshold_filter_min', default_value='-1'),
+        DeclareLaunchArgument('threshold_filter_max', default_value='3000'),
+        DeclareLaunchArgument('threshold_filter_min', default_value='0'),
         DeclareLaunchArgument('noise_removal_filter_min_diff', default_value='256'),
         DeclareLaunchArgument('noise_removal_filter_max_size', default_value='1000'),
         DeclareLaunchArgument('spatial_filter_alpha', default_value='-1.0'),
@@ -108,14 +108,14 @@ def generate_launch_description():
 
     # Node configuration
     parameters = [{arg.name: LaunchConfiguration(arg.name)} for arg in args]
-    # camera_name_val = LaunchConfiguration('camera_name')
+    camera_name_val = LaunchConfiguration('camera_name')
     # print("Camera Name:", camera_name_val)
-    camera_name_val = "right_robot1_camera"
-    remappings = [('/'+ camera_name_val +'/color/image_raw', '/camera/'+ camera_name_val +'/color/image_raw'),
-                    ('/'+ camera_name_val +'/depth_registered/points', '/camera/'+ camera_name_val +'/depth/color/points'),
-                    # ('/'+ camera_name_val +'/depth/points', '/camera/'+ camera_name_val +'/depth/color/points'),
-                    ('/'+ camera_name_val +'/depth/camera_info', '/camera/'+ camera_name_val +'/depth/camera_info'),
-                    ('/'+ camera_name_val +'/color/camera_info', '/camera/'+ camera_name_val +'/color/camera_info')]
+    remappings = [
+        ('color/image_raw', ['/camera/', camera_name_val, '/color/image_raw']),
+        ('depth_registered/points', ['/camera/', camera_name_val, '/depth/color/points']),
+        ('depth/camera_info', ['/camera/', camera_name_val, '/depth/camera_info']),
+        ('color/camera_info', ['/camera/', camera_name_val, '/color/camera_info'])
+    ]
     # get  ROS_DISTRO
     ros_distro = os.environ["ROS_DISTRO"]
     if ros_distro == "foxy":
