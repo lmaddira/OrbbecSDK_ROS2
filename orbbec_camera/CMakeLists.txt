@@ -110,6 +110,8 @@ set(COMMON_LIBRARIES
     -lrt
     -ldw
     yaml-cpp
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )
 if(USE_RK_HW_DECODER)
     list(APPEND COMMON_LIBRARIES ${RK_MPP_LIBRARIES} ${RGA_LIBRARIES})
